@@ -23,7 +23,7 @@ const db = new pg.Client({
 
 db.connect();
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "views"));
@@ -664,3 +664,4 @@ passport.deserializeUser( async (username, done) => {
 });
 
 app.listen(port, () => console.log(`Spree server running: http://localhost:${port}`));
+
