@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/ba6a4ac61c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <title><%= title %></title>
+     <style>
+
+    .product-wrapper {
+        background-color:  #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(20, 20, 20, 0.05);
+        padding: 20px;
+        overflow: hidden;
+        display: flex;
+        align-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        transition: transform .15s;
+    }
+
+    .purchase-info{
+    background: #fff;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(255, 180, 180, 0.25);
+    }
+    .purchase-info{
+        grid-row: span 2;
+    }
+
+    .product-image {
+      width: 300px;
+      height: 250px;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .product-info {
+      flex: 1 1 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .product-title {
+      font-size: 26px;
+      margin-bottom: 15px;
+      color: #8B4A39;
+    }
+    .product-brand{
+        font-size: 17px;
+        margin-bottom: 7px;
+    }
+
+    .product-price {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #B2563F;
+    }
+
+    .product-description {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+    
+    .product-description,  .product-specification{
+        background-color:  #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(20, 20, 20, 0.05);
+        padding: 10px 20px;
+    }
+    .spec-div{
+        margin-top: 15px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 30px;
+        width: 100%;
+    }
+    .spec-div > *{
+        width: 80%;
+        text-align: left;
+        padding: 10px;
+        border: 1px solid grey;
+    }
+
+    .btn-add-to-cart {
+        width: 100%;
+        margin-top: 15px;
+        padding: 14px 24px;
+        border: none;
+        background: #ff7a59;
+        color: white;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s ease;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .btn-add-to-cart:hover {
+      background: #ffad99;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+        <header class="header">
+        <div class="header-container">
+            <div class="brand">
+                
+                <a href="/">Spree</a>
+                <img src="/image/Spree Logo.png" alt="">
+            </div>
+
+            <nav class="nav">
+                <div class="nav-user">
+                    <% if (locals.Authenticated) { %>
+                        <button class="user-menu-toggle">Hi, <%= user.username %> <i class="fa-solid fa-angle-down"></i></button>
+                    <% } else { %>
+                        <a href="/login"><p id="username-display">SignUp/Login</p></a>
+                    <% } %>
+                </div>
+
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- User dropdown -->
+     <% if (locals.Authenticated) { %>
+        <% if(user.auth == "admin") { %>
+    <section class="user-menu" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <% if(locals.user.auth == "admin") { %>
+                    <div class="admin-office">Admin's Office</div><hr>
+                <% } %>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+    <% }else{ %>
+    <section class="user-menu-user" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+
+    <% } %>
+    <% } %>
+    <main class="page">
+    <div class="layout">
+        <section class="orders-flex">
+        <% orders.forEach(order => { %>
+                <div 
+                    class="orders-card"
+                    data-name="<%= order.product_name %>"
+                    data-price="<%= order.product_price %>"
+                    data-id="<%= order.product_id %>"
+                >
+                    <img src="/image/<%= order.product_name %>.jpeg" alt="<%= order.product_name %>">
+
+                    <div class="product-info">
+                        <h3 class="product-name" data-name="<%= order.product_name %>"><%= order.product_name %></h3>
+                        
+                        <div class="product-bottom">
+                            <p class="product-price">$<%= order.total_price %></p>
+                            
+                            <p><%= order.delivery_status %></p>
+                        </div>
+                    </div>
+                    <button class="order-track order-track-active" data-orderstatus="<%= order.delivery_status %>" data-orderstage="<%= order.delivery_stage %>">Order Details</button>
+                    <div class="order-track-group">
+                        <div class="stage-one"><span class="order-circle"><i class="fa-solid fa-check"></i></span></div>
+                        <div class="stage-two"><span class="order-circle"><i class="fa-solid fa-check"></i></span></div>
+                        <div class="stage-three"><span class="order-circle"><i class="fa-solid fa-check"></i></span></div>
+                        <div class="stage-four"><span class="order-circle"><i class="fa-solid fa-check"></i></span></div>
+                        <div class="stage-one"><p class="order-stage">Order Placed</p></div>
+                        <div class="stage-two"><p class="order-stage">Shipment In Progress</p></div>
+                        <div class="stage-three"><p class="order-stage">Ready for Delivery</p></div>
+                        <div class="stage-four"><p class="order-stage">Delivered</p></div>
+                    
+                    </div>
+                    <div class="order-dates" style="display: none; font-weight: 700;">
+                        <p>Quantity: <%= order.quantity %></p>
+                        <p>Order Date: <%= order.order_time %></p>
+                        <% if(order.arrival_time != null){ %>
+                            <p>Arrival Time: <%= order.arrival_time %></p>
+                        <% }else{ %>
+                            <p>Estimated Arrival Date: <%= order.estimated_arrivaltime %></p>
+                        <% } %>
+                    </div>
+                </div>
+     <%   }); %>
+</section>
+     
+        <aside class="sidebar">
+            <div class="category-box">
+                <h2>Shop by Category</h2>
+                <a class="btn category-btn" href="/bags">Shop Bags</a>
+                <a class="btn category-btn ghost" href="/cosmetics">Shop Cosmetics</a>
+                <a class="btn category-btn ghost" href="/jewelry">Shop Jewelry</a>
+            </div>
+            
+        </aside>
+
+                      
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</main>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/app.js"></script>   
+</body>
+</html>

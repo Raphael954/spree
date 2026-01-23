@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/ba6a4ac61c.js" crossorigin="anonymous"></script>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/styles.css">
+</head>
+<body>
+   <header class="header">
+        <div class="header-container">
+            <div class="brand">
+                
+                <a href="/">Spree</a>
+                <img src="/image/Spree Logo.png" alt="">
+            </div>
+
+            <nav class="nav">
+                <div class="nav-user">
+                    <% if (locals.Authenticated) { %>
+                        <button class="user-menu-toggle">Hi, <%= user.username %> <i class="fa-solid fa-angle-down"></i></button>
+                    <% } else { %>
+                        <a href="/login"><p id="username-display">SignUp/Login</p></a>
+                    <% } %>
+                </div>
+
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- User dropdown -->
+     <% if (locals.Authenticated) { %>
+        <% if(user.auth == "admin") { %>
+    <section class="user-menu" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <% if(locals.user.auth == "admin") { %>
+                    <div class="admin-office">Admin's Office</div><hr>
+                <% } %>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+    <% }else{ %>
+    <section class="user-menu-user" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+
+    <% } %>
+    <% } %>
+    
+<main class="page">
+    <div class="layout">
+        <div class="product-wrapper" data-initial-type="<%= products.product_group %>" data-name="<%= products.product_name %>" data-price="<%= products.product_price %>" data-id="<%= products.product_id %>">
+
+            <div class="product-image">
+                <img id="productImage" src="/image/<%= products.product_name %>.jpeg" alt="Product Image" />
+                <hr>
+            </div>
+
+            <div class="product-info">
+                <div class="product-title" id="productTitle"><%= products.product_name %></div>
+                <div class="product-brand">Brand: <span id="productBrand" style="color: blue;"><%= products.product_brand%></span><hr></div>
+                <div class="product-brand">Category: <span id="productBrand"><%= products.product_group %></span></div><hr>
+                <div class="mid">
+                    <div class="product-price">Price: $ <span id="productPrice"><%= products.product_price %></span></div>
+                    <% if(locals.products.stock <= 10) { %>
+                        <p class="no-left"><%= products.stock %> units left</p>
+                    <% } %>
+                    <hr>
+                </div>
+                <button class="btn-add-to-cart" data-id="<%= products.product_id %>"><i class="fa-solid fa-cart-plus" style="color: white;"></i>  Add to Cart</button>
+            </div>
+        </div>
+
+        <aside class="sidebar">
+            <div class="category-box">
+                <h2>Shop by Category</h2>
+                <a class="btn category-btn" href="/bags">Shop Bags</a>
+                <a class="btn category-btn ghost" href="/cosmetics">Shop Cosmetics</a>
+                <a class="btn category-btn ghost" href="/jewelry">Shop Jewelry</a>
+            </div>
+      </aside>
+
+        <div class="product-description" id="productDescription">
+            <h2>Product Details</h2>
+            <hr>
+            <p><%= products.product_details %></p>
+        </div>
+        <div class="purchase-info">
+            <h3><i class="fa-solid fa-truck-fast"></i> Delivery</h3>
+            <p>This product is eligible for door delivery.<br>It will be brought to your door step at the appointed date.</p><hr>
+            <h3><img src="/image/Pickup.png" style="width: 24px; height: 24px;" alt=""> Pickup Date</h3>
+            <p>Ready for pickup between <span id="arrival-date-one"></span> and <span id="arrival-date-two"></span>.<br>If you place your order within the next 7 days.</p><hr>
+            <h3><img src="/image/Return Policy.png" style="width: 24px; height: 24px;" alt=""> Return Policy</h3>
+            <p>All Delivered Products are not eligible for return</p>
+        </div>
+
+        <div class="product-specification" id="productSpecification">
+            <h2>Specifications</h2>
+            <hr>
+            <div class="spec-div">
+                <div class="key-features">
+                    <h3>KEY FEATURES</h3>
+                    <hr>
+                    <ul id="key-features" data-features="<%= products.key_features %>">
+                        <li>Easy to use.</li>
+                        <li>Powerful features.</li>
+                        <li>Long-wearing.</li>
+                        <li>It does not affect the eyes.</li>
+                    </ul>
+                </div>
+                <div class="box-content">
+                    <h3>WHAT'S IN THE PACKAGE</h3>
+                    <hr>
+                    <ul id="box-contents" data-content="<%= products.box_content %>">
+                        <li>Brown + black eyeliner gel kit</li>
+                        <li>Brown + black eyebrow powder kit</li>
+                        <li>High color density even color that looks fresh all day</li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/app.js"></script>
+
+</body>
+</html>

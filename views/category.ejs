@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+  <meta charset="utf-8" />
+  <script src="https://kit.fontawesome.com/ba6a4ac61c.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %> — Spree</title>
+  <link rel="stylesheet" href="/styles/styles.css" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="brand">
+                
+                <a href="/">Spree</a>
+                <img src="/image/Spree Logo.png" alt="">
+            </div>
+
+            <nav class="nav">
+                <div class="nav-user">
+                    <% if (locals.Authenticated) { %>
+                        <button class="user-menu-toggle">Hi, <%= user.username %> <i class="fa-solid fa-angle-down"></i></button>
+                    <% } else { %>
+                        <a href="/login"><p id="username-display">SignUp/Login</p></a>
+                    <% } %>
+                </div>
+
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- User dropdown -->
+     <% if (locals.Authenticated) { %>
+        <% if(user.auth == "admin") { %>
+    <section class="user-menu" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <% if(locals.user.auth == "admin") { %>
+                    <div class="admin-office">Admin's Office</div><hr>
+                <% } %>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+    <% }else{ %>
+    <section class="user-menu-user" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+
+    <% } %>
+    <% } %>
+    <section class="hero">
+          <h1>Timeless accessories. Fresh beauty.</h1>
+          <p>Shop curated bags, cosmetics and jewelry — fast shipping, easy returns.</p>
+          
+        </section>
+
+  <main class="page">
+    <h2 class="section-title"><%= title %></h2>
+
+    <div class="layout">
+      
+      <section class="products-grid">
+              <% products.forEach(product => { %>
+                <div 
+                    class="product-card"
+                    data-initial-type="<%= product.product_group %>"
+                    data-name="<%= product.product_name %>"
+                    data-price="<%= product.product_price %>"
+                    data-id="<%= product.product_id %>"
+                >
+                    <img src="/image/<%= product.product_name %>.jpeg" alt="<%= product.product_name %>">
+
+                    <div class="product-info">
+                        <h3 class="product-name" data-name="<%= product.product_name %>"><%= product.product_name %></h3>
+
+                        <div class="product-bottom">
+                            <p class="product-price">$<%= product.product_price %></p>
+
+                            <button class="btn add-to-cart" data-id="<%= product.product_id %>">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+              <% }) %>
+        </section>
+        
+      <aside class="sidebar">
+
+                <div class="category-box">
+                    <h2>Shop by Category</h2>
+                    <a class="btn category-btn" href="/bags">Shop Bags</a>
+                    <a class="btn category-btn ghost" href="/cosmetics">Shop Cosmetics</a>
+                    <a class="btn category-btn ghost" href="/jewelry">Shop Jewelry</a>
+                </div>
+
+             </aside>
+    </div>
+ 
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

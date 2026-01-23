@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+  <meta charset="utf-8" />
+  <script src="https://kit.fontawesome.com/ba6a4ac61c.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title %> — Spree</title>
+  <link rel="stylesheet" href="/styles/styles.css" />
+</head>
+<body>
+     <header class="header">
+        <div class="header-container">
+            <div class="brand">
+                <img src="/image/Spree Logo.png" alt="">
+                <a href="/">Spree</a>
+            </div>
+
+            <nav class="nav">
+                <div class="nav-user">
+
+                    <% if (locals.Authenticated) { %>
+                        <button class="user-menu-toggle">
+                            <p id="username-display">Hi, <%= user.username %> <i class="fa-solid fa-angle-down"></i></p>
+                        </button>
+                    <% } else { %>
+                        <a href="/login"><p id="username-display">SignUp / Login</p></a>
+                    <% } %>
+                </div>
+
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </nav>
+        </div>
+    </header>
+
+     <% if (locals.Authenticated) { %>
+        <% if(user.auth == "admin") { %>
+    <section class="user-menu" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <% if(locals.user.auth == "admin") { %>
+                    <div class="admin-office">Admin's Office</div><hr>
+                <% } %>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+    <% }else{ %>
+    <section class="user-menu-user" style="display: none;" id="user-menu">
+          
+            <div>Bal: $<%= user.balance %></div>
+            <div class="my-account">My Account</div>
+            <div class="user-cart">
+                <a href="/cart" id="cart-link" class="nav-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart (<span id="cart-count"><%= totalCartCount %></span>)
+                </a>
+            </div>
+            <div class="orders">Orders</div>
+            <div class="inbox">Inbox</div><hr>
+            <a href="/logout"><div class="logout">Logout</div></a>
+        
+    </section>
+
+    <% } %>
+    <% } %>
+  <main class="page">
+    <h2 class="section-title"><%= title %></h2>
+  <section class="layout">
+      
+    <div class="carts-grid">
+      <% if(locals.totalCartCount <= 0) { %>
+          <h1 id="empty-cart" style="display: block;">Your Cart Is Empty.<br>Go on a Shopping Spree</h1>
+        <% }else{ %>
+            <h1 id="empty-cart" style="display: none;">Your Cart Is Empty.<br>Go on a Shopping Spree</h1>
+
+            <% cartProducts.forEach(product => { %>
+              <% if(product.quantity > 0) { %>
+              <div class="cart-item" data-initial-type="<%= product.product_group %>" data-name="<%= product.product_name %>" data-price="<%= product.product_price %>" data-id="<%= product.product_id %>">
+                <img src="/image/<%= product.product_name %>.jpeg" alt="">
+                
+                <div class="cart-info">
+                  <h3 class="product-name"><%= product.product_name %></h3>
+                  <div class="cart-bottom">
+                    <p class="product-price">Price: $<%= product.product_price %></p>
+                    <p class="cart-qty">Quantity: 
+                      <i class="fa-solid fa-minus remove-qty" data-id="<%= product.product_id %>"></i>&nbsp;
+                      <span class="qty"><%= product.quantity %></span>
+                      <i class="fa-solid fa-plus add-qty" data-id="<%= product.product_id %>"></i>
+                    </p>
+                    <p class="product-subtotal">Subtotal: $ <span class="subtotal"><%= parseFloat(product.subtotal).toFixed(2) %></span></p>
+                  </div>
+                </div> 
+              </div>
+              <% }else{ return } %>
+            <%  }); %>        
+        <% } %>
+    </div>
+
+
+      <aside class="sidebar">
+          <div class="category-box">
+                    <h2>Shop by Category</h2>
+                    <a class="btn category-btn" href="/bags">Shop Bags</a>
+                    <a class="btn category-btn ghost" href="/cosmetics">Shop Cosmetics</a>
+                    <a class="btn category-btn ghost" href="/jewelry">Shop Jewelry</a>
+          </div>
+
+ 
+          <div class="cart-actions">
+            <button id="clear-cart" class="btn ghost remove">Clear Cart</button>
+            <a id="to-checkout" class="btn" href="/checkout">Checkout</a>
+          </div>
+
+      </aside>
+    </section>
+
+  </main>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

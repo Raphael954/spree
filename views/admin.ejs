@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <script src="https://kit.fontawesome.com/ba6a4ac61c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    /* === LAYOUT === */
+    :root{
+      --bg: #0f1724;
+      --panel: #0f1729;
+      --muted: #c9d4e8;
+      --accent: #295dff;
+      --danger: #e04b4b;
+      --card: #0b1220;
+      --surface: #0f1729;
+      --radius: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 230px;
+      background: #1f2937;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar .logo {
+      margin-bottom: 40px;
+    }
+
+    .sidebar nav a {
+      display: block;
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: inherit;
+      text-decoration: none;
+      word-break: break-word;
+    }
+
+    .sidebar nav a:hover {
+      background: #111827;
+    }
+
+    .sidebar nav .active {
+      background: #4b5563;
+    }
+
+    /* Main Content */
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+      width: calc(100% - 250px);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* === DASHBOARD STATS === */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    /* === TABLE === */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    .table th, .table td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      vertical-align: top;
+    }
+
+    .table th {
+      background: #e5e7eb;
+    }
+
+    /* === FORMS === */
+    .form {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 400px;
+    }
+
+    .form input,
+    .form textarea {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    .form button {
+      padding: 12px;
+      border: none;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .form button:hover {
+      background: #111827;
+    }
+
+    .orders-tabs{
+      display:flex;
+      gap:10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .orders-tab{
+      border: none;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 8px 14px;
+      transition: all .15s;
+    }
+
+    .orders-tab:hover{ transform: translateY(-2px); }
+
+    .orders-tab.active{
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 6px 18px rgba(41,93,255,0.15);
+    }
+
+    .orders-placeholder{
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px dashed rgba(255,255,255,0.03);
+      color: #9fb1ff;
+      padding: 40px;
+      border-radius: 10px;
+      text-align:center;
+    }
+
+    .orders-tab-content{ display:none; margin-top: 12px; }
+
+    .orders-table{
+      width:100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .orders-table th{
+      text-align:left;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      color: #d6e6ff;
+      font-weight:600;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .orders-table td{
+      padding: 12px 14px;
+      border-top: 1px solid rgba(255,255,255,0.02);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .action-btn{
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover{ filter: brightness(.95); }
+
+    .action-btn.danger{
+      background: var(--danger);
+    }
+
+    /* ========= Responsive (small devices) ========= */
+    @media (max-width: 900px) {
+      body { display: block; }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: auto;
+        width: 100%;
+        padding: 12px 14px;
+        z-index: 50;
+      }
+
+      .sidebar .logo {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+      }
+
+      .sidebar nav {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sidebar nav a {
+        margin: 0;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+      }
+
+      .sidebar nav a.active {
+        background: var(--accent);
+      }
+
+      .content {
+        margin-left: 0;
+        width: 100%;
+        padding: 14px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Make tables horizontally scrollable on mobile */
+      .table,
+      .orders-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .orders-tabs { gap: 8px; }
+      .orders-tab { width: 100%; }
+      .form { max-width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <h2 class="logo">ADMIN</h2>
+    <nav>
+      <a class="active" data-page="dashboard">📊 Dashboard</a>
+      <a data-page="sales">💰 Sales Records</a>
+      <a data-page="add-product">➕ Add Product</a>
+      <a data-page="update-product">🛠 Update Product</a>
+      <a data-page="delete-product">&#10134; Delete Product</a>
+      <a data-page="orders" class="admin-header"><i class="fa-solid fa-box"></i> Order Management</a>
+      <a href="/">Back to Website</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="page active">
+      <h1>Dashboard Overview</h1>
+      <div class="stats-grid">
+        <div class="card">
+          <h3>Total Sales</h3>
+          <p id="totalSales">₦0</p>
+        </div>
+        <div class="card">
+          <h3>Total Orders</h3>
+          <p id="totalOrders">0</p>
+        </div>
+        <div class="card">
+          <h3>Total Products</h3>
+          <p id="totalProducts">0</p>
+        </div>
+        <div class="card">
+          <h3>No. Of Registered Users</h3>
+          <p id="noOfUsers"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sales -->
+    <section id="sales" class="page">
+      <h1>Sales Records</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Unit Price</th>
+            <th>Qty</th>
+            <th>Total Profit</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="salesTable"></tbody>
+      </table>
+    </section>
+
+    <!-- Add Product -->
+    <section id="add-product" class="page">
+      <h1>Add New Product</h1>
+      <form id="addProductForm" class="form">
+        <input type="text" name="name" placeholder="Product Name" required>
+        <input text="number" name="price" placeholder="Price" required>
+        <input type="text" name="group" placeholder="Category" required>
+        <input type="text" name="brand" placeholder="Brand" required>
+        <input type="text" name="stock" placeholder="Number in Stock" required>
+        <textarea name="productDetails" placeholder="Product Details"></textarea>
+        <textarea name="boxContent" placeholder="what's in the Box (add . after each content)" required></textarea>
+        <textarea name="keyFeatures" placeholder="Key Features (add . after each feature)" required></textarea>
+        <button type="submit">Add Product</button>
+      </form>
+    </section>
+
+    <!-- Update Product -->
+    <section id="update-product" class="page">
+      <h1>Update Product</h1>
+
+      <form id="updateProductForm" class="form">
+        <input type="text" name="id" placeholder="Product ID" required>
+        <input type="text" name="name" placeholder="New Name">
+        <input type="text" name="price" placeholder="New Price">
+        <input type="text" name="newStock" id="stock" placeholder="Add Stock">
+        <button type="submit">Update</button>
+      </form>
+    </section>
+
+    <!-- Delete Product-->
+    <section id="delete-product" class="page">
+      <h1>Delete Product</h1>
+
+      <form id="deleteProductForm" class="form">
+        <input type="text" name="id" placeholder="Input ID - Use this or Product Name">
+        <input type="text" name="name" placeholder="Input Name - Use this or ID">
+        <button type="submit">Delete</button>
+      </form>
+    </section>
+
+    <section id="orders" class="page">
+      <div class="orders-tabs">
+        <button class="orders-tab" data-tab="all">All Orders</button>
+        <button class="orders-tab" data-tab="placed">Placed Orders</button>
+        <button class="orders-tab" data-tab="shipped">Shipped Orders</button>
+        <button class="orders-tab" data-tab="ready">Ready for Delivery</button>
+        <button class="orders-tab" data-tab="delivered">Delivered Orders</button>
+      </div>
+
+      <!-- Placeholder (visible until a tab clicked) -->
+      <div id="orders-placeholder" class="orders-placeholder"><p>Select a tab to view orders.</p></div>
+
+      <div id="tab-all" class="orders-tab-content">
+        <table class="orders-table" id="table-all">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Buyer Name</th><th>Telephone</th><th>Product Name</th><th>Unit Cost</th><th>Qty</th><th>Total Profit</th><th>Delivery Location</th><th>Order Date</th><th>Est. Delivery</th><th>Delivery Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="tab-placed" class="orders-tab-content">
+        <table class="orders-table" id="table-placed">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Buyer Name</th><th>Telephone</th><th>Product Name</th><th>Unit Cost</th><th>Qty</th><th>Total Profit</th><th>Delivery Location</th><th>Order Date</th><th>Est. Delivery</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="tab-shipped" class="orders-tab-content">
+        <table class="orders-table" id="table-shipped">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Buyer Name</th><th>Telephone</th><th>Product Name</th><th>Unit Cost</th><th>Qty</th><th>Total Profit</th><th>Delivery Location</th><th>Order Date</th><th>Est. Delivery</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="tab-ready" class="orders-tab-content">
+        <table class="orders-table" id="table-ready">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Buyer Name</th><th>Telephone</th><th>Product Name</th><th>Unit Cost</th><th>Qty</th><th>Total Profit</th><th>Delivery Location</th><th>Order Date</th><th>Est. Delivery</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="tab-delivered" class="orders-tab-content">
+        <table class="orders-table" id="table-delivered">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Buyer Name</th><th>Telephone</th><th>Product Name</th><th>Unit Cost</th><th>Qty</th><th>Total Profit</th><th>Delivery Location</th><th>Order Date</th><th>Delivery Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
